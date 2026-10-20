@@ -2,7 +2,7 @@ name: Release
 
 # Swift Package Manager needs nothing but the tag itself. This workflow checks the tag and, when enabled, pushes
 # MiniwallCore and MiniwallSDK to CocoaPods Trunk (Core first, SDK depends on it). Nothing is published until the owner
-# creates the `publish` environment with required reviewers, adds COCOAPODS_TRUNK_TOKEN to it and sets the repository
+# creates the `publish` environment with required reviewers, adds COCOAPODS_TRUNK_TOKEN as a repository secret and sets the repository
 # variable PUBLISH_ENABLED=true.
 on:
   push:
