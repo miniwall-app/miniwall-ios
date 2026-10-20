@@ -1,0 +1,69 @@
+name: Release
+
+# Swift Package Manager needs nothing but the tag itself. This workflow checks the tag and, when enabled, pushes
+# MiniwallCore and MiniwallSDK to CocoaPods Trunk (Core first, SDK depends on it). Nothing is published until the owner
+# creates the `publish` environment with required reviewers, adds COCOAPODS_TRUNK_TOKEN to it and sets the repository
+# variable PUBLISH_ENABLED=true.
+on:
+  push:
+    tags: ['[0-9]+.[0-9]+.[0-9]+*']
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    name: tag checks
+    runs-on: ubuntu-latest
+    outputs:
+      enabled: ${{ steps.g.outputs.enabled }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: g
+        env:
+          TAG: ${{ github.ref_name }}
+          ENABLED: ${{ vars.PUBLISH_ENABLED }}
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main || { echo "::error::tag $TAG is not on main"; exit 1; }
+          for f in MiniwallCore.podspec MiniwallSDK.podspec; do
+            v=$(sed -n "s/^  s.version *= *'\(.*\)'/\1/p" "$f")
+            [ "$v" = "$TAG" ] || { echo "::error::tag $TAG does not match $f ($v)"; exit 1; }
+          done
+          grep -qE "^## ${TAG//./\\.}( |$)" CHANGELOG.md || { echo "::error::CHANGELOG.md has no '## $TAG' section"; exit 1; }
+          echo "enabled=${ENABLED:-false}" >> "$GITHUB_OUTPUT"
+
+  publish:
+    name: push to CocoaPods Trunk
+    needs: guard
+    if: needs.guard.outputs.enabled == 'true'
+    runs-on: macos-latest
+    environment: publish
+    steps:
+      - uses: actions/checkout@v4
+      - run: scripts/fetch-spec.sh
+      - run: swift test
+      - name: lint and push
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+        run: |
+          set -euo pipefail
+          pod spec lint MiniwallCore.podspec --allow-warnings
+          pod trunk push MiniwallCore.podspec --allow-warnings
+          pod spec lint MiniwallSDK.podspec --allow-warnings
+          pod trunk push MiniwallSDK.podspec --allow-warnings
+
+  github-release:
+    name: GitHub release
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: gh release create "$TAG" --verify-tag --title "$TAG" --generate-notes
