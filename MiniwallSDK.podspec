@@ -1,7 +1,7 @@
 # CocoaPods (React Native, Flutter, CocoaPods apps); Swift Package Manager users pick the MiniwallSDK product.
 # Paths are relative to this folder: use it with :path until the pods are published (phase 9).
-#   pod 'MiniwallCore', :path => '<repo>/sdks/ios'
-#   pod 'MiniwallSDK', :path => '<repo>/sdks/ios'
+#   pod 'MiniwallCore', :path => '<miniwall-ios checkout>'
+#   pod 'MiniwallSDK', :path => '<miniwall-ios checkout>'
 Pod::Spec.new do |s|
   s.name          = 'MiniwallSDK'
   s.version       = '0.1.0'

@@ -1,7 +1,7 @@
 import XCTest
 @testable import MiniwallCore
 
-/// Same cases as sdks/android/core DisplayWidthTest.kt.
+/// Same cases as the Android SDK's DisplayWidthTest.
 final class DisplayWidthTests: XCTestCase {
     func testSizesFollowTheWebTable() {
         XCTAssertEqual(DisplayWidth.cap(kind: "modal", size: "small", maxContentWidth: nil), 360)

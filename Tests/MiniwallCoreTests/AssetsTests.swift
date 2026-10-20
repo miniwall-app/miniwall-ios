@@ -2,7 +2,7 @@ import Foundation
 import XCTest
 @testable import MiniwallCore
 
-/// Same cases as sdks/android/core AssetsTest.kt.
+/// Same cases as the Android SDK's AssetsTest.
 final class AssetsTests: XCTestCase {
     private func obj(_ s: String) -> JSONValue { JSONValue.parse(string: s)! }
 

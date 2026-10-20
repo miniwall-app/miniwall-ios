@@ -9,7 +9,7 @@ let package = Package(
         .library(name: "MiniwallSDK", targets: ["MiniwallSDK"]),
     ],
     targets: [
-        // Pure Swift (Foundation only): PaywallData model and the layout engine. Mirrors sdks/android/core.
+        // Pure Swift (Foundation only): PaywallData model and the layout engine. Mirrors the Android SDK's core.
         .target(name: "MiniwallCore"),
         // SwiftUI renderer and the public API.
         .target(name: "MiniwallSDK", dependencies: ["MiniwallCore"], resources: [.copy("PrivacyInfo.xcprivacy")]),

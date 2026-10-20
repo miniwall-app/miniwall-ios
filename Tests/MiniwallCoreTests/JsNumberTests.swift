@@ -1,7 +1,7 @@
 import XCTest
 @testable import MiniwallCore
 
-/// Same cases as sdks/android/core JsNumberTest.kt: text turns into numbers the way JavaScript's Number() does.
+/// Same cases as the Android SDK's JsNumberTest: text turns into numbers the way JavaScript's Number() does.
 final class JsNumberTests: XCTestCase {
     func testParsesLikeJavaScriptsNumber() {
         XCTAssertEqual(Targeting.jsParse("5"), 5)

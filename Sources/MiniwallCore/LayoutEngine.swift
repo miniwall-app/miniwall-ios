@@ -129,7 +129,7 @@ public struct LayoutRect: Equatable, Sendable {
 
 /// Computes the frame of every node the way the web renderer's CSS does
 /// (the web renderer). Pure and deterministic: the same algorithm
-/// exists in Kotlin (sdks/android/core) and both are checked against goldens from the web
+/// exists in Kotlin (the Android SDK's core) and both are checked against goldens from the web
 /// (the shared conformance suite). All sizes are border-box, in pt (= CSS px = dp).
 public enum LayoutEngine {
     /// Lays out a screen's root stack inside a `screenWidth` x `screenHeight` area. The root

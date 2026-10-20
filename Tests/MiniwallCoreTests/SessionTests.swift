@@ -2,7 +2,7 @@ import Foundation
 import XCTest
 @testable import MiniwallCore
 
-/// Same cases as sdks/android/core SessionTest.kt.
+/// Same cases as the Android SDK's SessionTest.
 final class SessionTests: XCTestCase {
     private func screen(_ id: String, _ components: String) -> JSONValue {
         JSONValue.parse(string: """
@@ -145,7 +145,7 @@ final class SessionTests: XCTestCase {
     }
 
     /// Web parity: `complete_workflow` is pressable but the Web SDK never wires `onCompleteWorkflowNavigate`
-    /// (sdks/web/src/render.ts), so the press does nothing: no URL opened, no event, no result, no close, no onAction.
+    /// (as the Web SDK does), so the press does nothing: no URL opened, no event, no result, no close, no onAction.
     func testCompleteWorkflowDoesNothingLikeTheWebSdk() {
         let host = Host()
         var events: [JSONValue] = []

@@ -3,13 +3,13 @@
 Show screens built in the Miniwall dashboard (paywalls, onboarding, offers, surveys) natively in
 SwiftUI. Miniwall renders; your app sells: prices come from your app, purchases run in your code.
 
-Status: preview, not yet tagged for release. Tested on an iPhone 17 simulator (iOS 27): `swift test` 75/75, UI tests, 77-template sweep. iOS 16+, Swift 5.9 (Xcode 15+).
+Status: preview, not yet tagged for release. Tested on an iPhone 17 simulator (iOS 27): `swift test` 75/75, UI tests, 77-template sweep (the sample app and the sweep are not in this repository). iOS 16+, Swift 5.9 (Xcode 15+).
 
 ## Install
 
-Swift Package Manager: add this repository (or, for now, the local folder `sdks/ios`) and pick the
-`MiniwallSDK` product. CocoaPods (React Native, Flutter): `pod 'MiniwallCore', :path => 'sdks/ios'`
-and `pod 'MiniwallSDK', :path => 'sdks/ios'`.
+Swift Package Manager: add this repository (or, for now, a local checkout) and pick the
+`MiniwallSDK` product. CocoaPods (React Native, Flutter): `pod 'MiniwallCore', :path => '<miniwall-ios checkout>'`
+and `pod 'MiniwallSDK', :path => '<miniwall-ios checkout>'`.
 
 ## Use
 
@@ -57,9 +57,9 @@ frequency caps and A/B tests. `PrivacyInfo.xcprivacy` is included.
 
 ## Develop
 
-```bash
-swift test   # core: layout goldens, logic vectors, every template, sessions (macOS, no simulator)
-```
+The tests run against the [Miniwall spec](https://github.com/miniwall-app/miniwall-spec) (fixtures, golden frames, logic vectors). The version this SDK is tested against is pinned in `SPEC_VERSION`:
 
-`Sources/MiniwallDebug/ConformanceGallery.swift` previews every template in Xcode's canvas.
-`Example/ContentView.swift` is a sample app screen. Maintainer notes (Vietnamese): `../README.md`.
+```bash
+scripts/fetch-spec.sh   # puts it in .spec/ (or set MINIWALL_SPEC_DIR to your own checkout)
+swift test              # core: layout goldens, logic vectors, components, sessions (macOS, no simulator)
+```
