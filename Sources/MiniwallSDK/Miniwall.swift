@@ -108,7 +108,7 @@ public enum Miniwall {
                     guard let body = try? await client.fetch("/placements/\(placement.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? placement)") else { return }
                     #if os(iOS)
                     let paywall = Delivery.pickSide(body, visitorId: memory.visitorId).paywall
-                    await FontRegistry.shared.load(paywall)
+                    await FontRegistry.shared.load(paywall, wait: FontRegistry.preloadWait)
                     await preloadImages(in: paywall)
                     #endif
                 }

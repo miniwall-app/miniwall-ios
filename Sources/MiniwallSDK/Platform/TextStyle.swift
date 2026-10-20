@@ -3,6 +3,20 @@ import CoreText
 import MiniwallCore
 import UIKit
 
+/// Resumes a continuation once, from whichever of two tasks gets there first.
+private final class FirstOnly: @unchecked Sendable {
+    private let lock = NSLock()
+    private var continuation: CheckedContinuation<Void, Never>?
+    init(_ continuation: CheckedContinuation<Void, Never>) { self.continuation = continuation }
+    func resume() {
+        lock.lock()
+        let c = continuation
+        continuation = nil
+        lock.unlock()
+        c?.resume()
+    }
+}
+
 /// Fonts for texts: a downloaded custom font (`components_config.fonts[name].ios`), a font of
 /// that family installed on the device, or the system font at the requested weight.
 final class FontRegistry {
@@ -26,47 +40,71 @@ final class FontRegistry {
         return false
     }
 
+    /// How long a screen waits for its fonts before it shows with the system font; the download goes on and serves the next screen.
+    static let showWait: TimeInterval = 1.5
+    /// `Miniwall.preload` runs in the background: it can wait for slow fonts.
+    static let preloadWait: TimeInterval = 10
+
+    private var inFlight: [String: Task<Void, Never>] = [:]
+
     /// Downloads and registers the screen's custom fonts: the link the server delivered for the name
     /// (`assets.fonts`), else `components_config.fonts[name].ios` when that is a link to a TTF/OTF (kept in the caches directory). Names that are not links (older screens)
-    /// keep the system font; a font that fails to load is skipped.
-    func load(_ paywall: JSONValue?) async {
+    /// keep the system font; a font that fails to load is skipped. All fonts download at once, in the background, and the
+    /// screen waits at most `wait` seconds: a slow network costs one short wait, not one per font, and the screen uses the
+    /// system font for what did not arrive. A font that arrives later stays registered (and cached on disk) for the next screen.
+    func load(_ paywall: JSONValue?, wait: TimeInterval = FontRegistry.showWait) async {
         guard case let .object(fonts)? = paywall?["components_config"]?["fonts"] else { return }
         let directory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("miniwall/fonts", isDirectory: true)
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-        var jobs: [(name: String, url: URL, file: URL)] = []
+        var tasks: [Task<Void, Never>] = []
         for (name, declaration) in fonts {
             lock.lock()
             let known = registered[name] != nil || failed.contains(name)
             lock.unlock()
             guard !known, let link = DeliveredAssets.shared.fontLink(name: name, declaration: declaration), let url = URL(string: link) else { continue }
-            jobs.append((name, url, directory.appendingPathComponent(String(format: "%08x", Self.stableHash(link)) + ".font")))
-        }
-        // All fonts at once, each with its own short limit: a slow network costs one wait, not one per font, and the
-        // screen then uses the system font for what did not arrive.
-        let results = await withTaskGroup(of: (String, URL, Data?).self) { group -> [(String, URL, Data?)] in
-            for job in jobs {
-                group.addTask {
-                    if let cached = try? Data(contentsOf: job.file) { return (job.name, job.file, cached) }
-                    // Read in chunks with a size limit: refused on a larger Content-Length, cancelled once the bytes pass the limit.
-                    guard case .data(let data) = await LimitedDownload.fetch(URLRequest(url: job.url, timeoutInterval: 6), max: DownloadLimits.maxFontBytes, configuration: URLSession.shared.configuration) else {
-                        NSLog("Miniwall: font %@ not loaded (failed or larger than %lld bytes)", job.name, DownloadLimits.maxFontBytes)
-                        return (job.name, job.file, nil)
-                    }
-                    try? data.write(to: job.file, options: .atomic)
-                    return (job.name, job.file, data)
-                }
-            }
-            var all: [(String, URL, Data?)] = []
-            for await item in group { all.append(item) }
-            return all
-        }
-        for (name, file, data) in results {
-            if let data, register(name: name, data: data) { continue }
-            try? FileManager.default.removeItem(at: file)
+            let file = directory.appendingPathComponent(String(format: "%08x", Self.stableHash(link)) + ".font")
             lock.lock()
-            failed.insert(name)
+            if let running = inFlight[link] {
+                tasks.append(running)
+            } else {
+                let task = Task { [self] in
+                    await download(name: name, url: url, file: file)
+                    lock.lock()
+                    inFlight[link] = nil
+                    lock.unlock()
+                }
+                inFlight[link] = task
+                tasks.append(task)
+            }
             lock.unlock()
         }
+        guard !tasks.isEmpty else { return }
+        // Wait for all of them or for the time limit, whichever comes first. (A task group would wait for its slowest child
+        // before returning, whatever the limit; the downloads are not cancelled with this wait either.)
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            let first = FirstOnly(continuation)
+            Task { for task in tasks { await task.value }; first.resume() }
+            Task { try? await Task.sleep(nanoseconds: UInt64(wait * 1_000_000_000)); first.resume() }
+        }
+    }
+
+    private func download(name: String, url: URL, file: URL) async {
+        let data: Data?
+        if let cached = try? Data(contentsOf: file) {
+            data = cached
+        } else if case .data(let fetched) = await LimitedDownload.fetch(URLRequest(url: url, timeoutInterval: 6), max: DownloadLimits.maxFontBytes, configuration: URLSession.shared.configuration) {
+            // Read in chunks with a size limit: refused on a larger Content-Length, cancelled once the bytes pass the limit.
+            try? fetched.write(to: file, options: .atomic)
+            data = fetched
+        } else {
+            NSLog("Miniwall: font %@ not loaded (failed or larger than %lld bytes)", name, DownloadLimits.maxFontBytes)
+            data = nil
+        }
+        if let data, register(name: name, data: data) { return }
+        try? FileManager.default.removeItem(at: file)
+        lock.lock()
+        failed.insert(name)
+        lock.unlock()
     }
 
     func postScriptName(for name: String) -> String? {
