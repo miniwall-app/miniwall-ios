@@ -5,7 +5,7 @@ import XCTest
 /// B156: carousel, tabs, video and multiple choice had no template, so nothing exercised them. The fixtures in
 /// the spec's fixtures/components are small screens for exactly those; this parses each, builds the render tree at
 /// both golden sizes, checks the frames against the web goldens (golden/components) and drives the state changes.
-/// Port of ComponentFixturesTest.kt (not run at cloud: no Swift there).
+/// Runs the component fixtures of the spec.
 final class ComponentFixturesTests: XCTestCase {
     private var dir: URL { Spec.dir.appendingPathComponent("fixtures/components") }
 

@@ -2,7 +2,7 @@ import Foundation
 import XCTest
 @testable import MiniwallCore
 
-/// Same cases as the Android SDK's AutoTriggersTest.
+/// Same cases on every platform SDK.
 final class AutoTriggersTests: XCTestCase {
     private let body = JSONValue.parse(string: """
     {"placements":[

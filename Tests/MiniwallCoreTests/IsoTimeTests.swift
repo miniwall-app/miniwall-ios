@@ -2,7 +2,7 @@ import Foundation
 import XCTest
 @testable import MiniwallCore
 
-/// Same cases as the Android SDK's IsoTimeTest, checked against Foundation's own parser.
+/// Same cases on every platform SDK, checked against Foundation's own parser.
 final class IsoTimeTests: XCTestCase {
     func testFormatMatchesFoundationAcrossTheCalendar() {
         let reference = ISO8601DateFormatter()

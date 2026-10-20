@@ -1,6 +1,6 @@
 import Foundation
 
-/// sRGB color, components 0...1. Mirrors `RenderTree.kt`.
+/// sRGB color, components 0...1.
 public struct Rgba: Equatable, Sendable {
     public var r, g, b, a: Double
 

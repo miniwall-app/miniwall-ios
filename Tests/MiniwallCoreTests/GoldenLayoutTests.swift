@@ -4,7 +4,7 @@ import XCTest
 
 /// Every layout fixture in the Miniwall spec must produce the same frames as the web
 /// renderer (golden/layout/<name>.json), within `tolerance` pt, at every golden viewport.
-/// Same check as the Android SDK's GoldenLayoutTest.
+/// Same check on every platform SDK.
 final class GoldenLayoutTests: XCTestCase {
     /// Layout-only fixtures have no text, so frames must match closely (Chrome rounds to 1/64 px).
     private let tolerance = 0.1

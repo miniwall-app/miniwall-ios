@@ -2,7 +2,7 @@ import Foundation
 import XCTest
 @testable import MiniwallCore
 
-/// Same cases as the Android SDK's SessionTest.
+/// Same cases on every platform SDK.
 final class SessionTests: XCTestCase {
     private func screen(_ id: String, _ components: String) -> JSONValue {
         JSONValue.parse(string: """

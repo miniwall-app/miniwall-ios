@@ -2,7 +2,7 @@ import Foundation
 import XCTest
 @testable import MiniwallCore
 
-/// Same checks as the Android SDK's SvgTest: every icon the templates use must have the
+/// Same checks on every platform SDK: every icon the templates use must have the
 /// bounding box the browser computes (golden/icons), and path commands must reduce correctly.
 final class SvgTests: XCTestCase {
     private func load(_ path: String) throws -> [String: JSONValue] {

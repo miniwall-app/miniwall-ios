@@ -38,7 +38,7 @@ public struct AppOpened: Equatable {
 
 /// Decides which automatic placements an app's moments fire. The platform layer owns the
 /// presenting (one screen at a time, the first placement that does not skip wins, like the web
-/// SDK's queue); this holds the rules, so they are tested once. Mirrors `AutoTriggers.kt`.
+/// SDK's queue); this holds the rules, so they are tested once.
 public final class AutoTriggers {
     private let store: KeyValueStore
     public private(set) var triggers: [AutoTrigger] = []

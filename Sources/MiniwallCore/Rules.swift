@@ -13,7 +13,7 @@ public struct PackageInfo: Equatable, Sendable {
     }
 }
 
-/// Overrides and visibility conditions (the web renderer). Mirrors `Rules.kt`.
+/// Overrides and visibility conditions (the web renderer).
 public enum Overrides {
     public struct State: Equatable {
         public var selected = false

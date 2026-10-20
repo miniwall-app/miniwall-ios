@@ -33,7 +33,7 @@ public struct SvgIcon: Equatable, Sendable {
 /// Design Icons): `path`, `circle`, `ellipse`, `rect`, `line`, `polyline`, `polygon`, inside `g`
 /// and `svg`, with fill/stroke/stroke-width/linecap/linejoin inherited as in SVG. Colors are
 /// ignored (an icon is tinted with one color), `none` is honored. Platforms only replay `PathOp`s.
-/// Mirrors `Svg.kt`.
+///
 public enum Svg {
     private struct Style {
         var fill: String?

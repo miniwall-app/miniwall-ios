@@ -1,7 +1,7 @@
 import Foundation
 @testable import MiniwallCore
 
-/// Fixed metrics: each character is 0.55 x the font size wide, lines are 1.5 x tall (same as the Kotlin FakeMeasurer).
+/// Fixed metrics: each character is 0.55 x the font size wide, lines are 1.5 x tall.
 struct FakeMeasurer: TextMeasurer {
     func measure(_ runs: [TextLogic.Run], font: FontSpec, maxWidth: Double?) -> (width: Double, height: Double) {
         let text = runs.map(\.text).joined()

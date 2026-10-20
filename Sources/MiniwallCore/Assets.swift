@@ -1,8 +1,8 @@
 import Foundation
 
-/// `assets` of a delivery body (MOBILE-SDK-PLAN S12): SVG markup per icon (`lucide/x`) and a TTF link per
+/// `assets` of a delivery body: SVG markup per icon (`lucide/x`) and a TTF link per
 /// `font_name` (`Inter@600`), so a phone does not call api.iconify.design or trust the links saved in the
-/// screen. Older servers send none; every lookup then falls back to the node's own link. Port of `Assets.kt`.
+/// screen. Older servers send none; every lookup then falls back to the node's own link.
 public struct DeliveryAssets: Equatable {
     public var icons: [String: String]
     public var fonts: [String: String]
@@ -19,7 +19,7 @@ public struct DeliveryAssets: Equatable {
 
 /// Size limits of downloads (images and fonts come from links in the screen, so a bad link must not fill memory).
 /// A download whose `Content-Length` is larger is refused before the body is read; one without a length (or lying
-/// about it) is aborted as soon as the bytes read pass the limit. Port of `DownloadLimits` in `Assets.kt`.
+/// about it) is aborted as soon as the bytes read pass the limit.
 public enum DownloadLimits {
     public static let maxImageBytes: Int64 = 10 * 1024 * 1024
     public static let maxFontBytes: Int64 = 5 * 1024 * 1024
@@ -116,7 +116,7 @@ public enum Assets {
     }
 }
 
-/// Facts the SDK reads from the device for audiences (docs/specs/targeting.md, mobile section). Port of `AutoAttributes` in `Assets.kt`.
+/// Facts the SDK reads from the device for audiences.
 public enum AutoAttributes {
     /// Region of a locale (`vi-VN`, `vi_VN`, `zh-Hans-CN`, `es-419`), upper case; nil when the locale has none. Never from an IP.
     public static func country(_ locale: String?) -> String? {

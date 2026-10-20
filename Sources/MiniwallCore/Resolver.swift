@@ -6,7 +6,7 @@ public protocol TextMeasurer {
     func measure(_ runs: [TextLogic.Run], font: FontSpec, maxWidth: Double?) -> (width: Double, height: Double)
 }
 
-/// Everything a screen renders from that does not change while it is shown. Mirrors `Resolver.kt`.
+/// Everything a screen renders from that does not change while it is shown.
 public struct ScreenContext {
     public var componentsConfig: JSONValue
     public var localizations: [String: [String: String]]

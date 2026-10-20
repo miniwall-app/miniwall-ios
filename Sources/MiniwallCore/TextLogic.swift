@@ -1,7 +1,7 @@
 import Foundation
 
 /// Text helpers ported from the web renderer. Each function matches its web source exactly;
-/// the shared conformance suite holds the cases both must agree on. Mirrors `TextLogic.kt`.
+/// the shared conformance suite holds the cases both must agree on.
 public enum TextLogic {
     // MARK: Regex helpers (NSRegularExpression works on UTF-16, like JavaScript)
 
@@ -62,7 +62,7 @@ public enum TextLogic {
 
     private static func escapeHTML(_ text: String) -> String {
         var out = ""
-        // Scalars, not Characters: a combining mark after `<` would make "<" + mark one Character and skip the escape (JS and Kotlin work on UTF-16 units).
+        // Scalars, not Characters: a combining mark after `<` would make "<" + mark one Character and skip the escape (JS works on UTF-16 units).
         for c in text.unicodeScalars {
             switch c {
             case "&": out += "&amp;"

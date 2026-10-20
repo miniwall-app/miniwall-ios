@@ -174,8 +174,8 @@ extension Events {
 }
 
 
-/// Icons and font links the server delivered next to screens (`assets`, MOBILE-SDK-PLAN S12). Kept for the process:
-/// a name always maps to the same file, so what an earlier screen brought serves a later one. Port of `DeliveredAssets` (Platform.kt).
+/// Icons and font links the server delivered next to screens (`assets`). Kept for the process:
+/// a name always maps to the same file, so what an earlier screen brought serves a later one.
 final class DeliveredAssets {
     static let shared = DeliveredAssets()
     private var assets = DeliveryAssets()

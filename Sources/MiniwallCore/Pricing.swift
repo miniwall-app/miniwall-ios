@@ -67,7 +67,7 @@ public struct ProductInfo: Equatable, Sendable {
     }
 }
 
-/// `{{ product.* }}` values per package (Web SDK src/pricing.ts). Mirrors `Pricing.kt`.
+/// `{{ product.* }}` values per package (Web SDK src/pricing.ts).
 public enum Pricing {
     /// `en_US` (paywall JSON) -> Locale; nil -> en_US.
     public static func locale(_ code: String?) -> Locale {

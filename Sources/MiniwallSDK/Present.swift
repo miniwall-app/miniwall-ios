@@ -27,7 +27,7 @@ public enum PresentationStyle: Equatable, Sendable {
     /// A small card at the bottom (or top) that closes itself after `seconds`.
     case toast(seconds: Double, top: Bool = false)
 
-    /// The placement's `display` (docs/specs/display-and-triggers.md) mapped to iOS (MOBILE-SDK-PLAN 5.1).
+    /// The placement's `display` mapped to iOS.
     static func from(display: JSONValue?) -> PresentationStyle {
         switch display?.str("format") {
         case "modal", "drawer", "launcher": return .modal

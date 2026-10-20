@@ -51,7 +51,7 @@ public enum JSONValue: Equatable, Sendable {
     }
 }
 
-// MARK: - Access helpers (mirror the Kotlin core's obj/str/num/bool)
+// MARK: - Access helpers (obj/str/num/bool)
 
 public extension JSONValue {
     /// The object at `key`, if it is one.
@@ -106,8 +106,8 @@ public extension JSONValue {
 }
 
 extension Double {
-    /// The whole number nearest toward zero, kept in a range both platforms agree on: Swift's `Int(d)` traps on
-    /// NaN, infinity and values past 64 bits where Kotlin's `toLong()` saturates.
+    /// The whole number nearest toward zero, kept in a range every platform agrees on: Swift's `Int(d)` traps on
+    /// NaN, infinity and values past 64 bits, where other platforms saturate.
     var clampedInt64: Int64 { isNaN ? 0 : Int64(max(-9e15, min(9e15, self))) }
     var clampedInt: Int { Int(clampedInt64) }
 }

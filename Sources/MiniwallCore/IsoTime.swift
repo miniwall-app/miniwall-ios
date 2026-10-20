@@ -1,6 +1,6 @@
 import Foundation
 
-/// ISO 8601 timestamps with one set of rules on every platform (mirrors `IsoTime.kt`): always UTC with
+/// ISO 8601 timestamps with one set of rules on every platform: always UTC with
 /// milliseconds when written, like JavaScript's `toISOString()`: `2026-10-10T12:00:00.123Z`.
 public enum IsoTime {
     public static func format(_ epochMs: Int64) -> String {

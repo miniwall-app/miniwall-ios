@@ -3,7 +3,7 @@ import XCTest
 @testable import MiniwallCore
 
 /// Every case in the spec's vectors must give the web's exact output.
-/// Same suite as the Android SDK's VectorTest.
+/// Same suite on every platform SDK.
 final class VectorTests: XCTestCase {
     private func cases(_ name: String) throws -> [JSONValue] {
         let url = Spec.dir.appendingPathComponent("vectors/\(name).json")

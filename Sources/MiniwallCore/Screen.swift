@@ -2,7 +2,7 @@ import Foundation
 
 /// One laid-out screen, ready to paint: the header pinned at the top, the root stack (which
 /// scrolls inside `rootFrame` when `contentHeight` is taller), the footer pinned at the bottom,
-/// and an open sheet over a dimmed backdrop. Mirrors `Screen.kt` and the web renderer.
+/// and an open sheet over a dimmed backdrop. Mirrors the web renderer.
 public final class ScreenRender {
     public let width: Double
     public let height: Double
@@ -32,7 +32,7 @@ public final class ScreenRender {
 public enum Localization {
     public static func resolve(_ available: [String], requested: String?, defaultLocale: String) -> String {
         if let requested, !requested.isEmpty {
-            // Only the first '-' (like the web and Kotlin): en-US -> en_US.
+            // Only the first '-' (like the web): en-US -> en_US.
             var normalized = requested
             if let dash = normalized.firstIndex(of: "-") { normalized.replaceSubrange(dash...dash, with: "_") }
             let sorted = available.sorted()

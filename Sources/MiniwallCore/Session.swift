@@ -1,6 +1,6 @@
 import Foundation
 
-/// Persistent key-value storage (UserDefaults on iOS). Values are JSON text. Mirrors `Delivery.kt`.
+/// Persistent key-value storage (UserDefaults on iOS). Values are JSON text.
 public protocol KeyValueStore: AnyObject {
     func get(_ key: String) -> String?
     func set(_ key: String, _ value: String?)
@@ -330,7 +330,7 @@ public struct MiniwallError: LocalizedError, Sendable {
     public var errorDescription: String? { message }
 }
 
-/// One presentation of a screen and the flow behind it (Web SDK src/render.ts). Mirrors `Session.kt`.
+/// One presentation of a screen and the flow behind it (Web SDK src/render.ts).
 public final class PaywallSession {
     private struct Screen {
         let paywall: JSONValue
