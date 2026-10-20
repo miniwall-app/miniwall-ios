@@ -205,7 +205,7 @@ struct ImageNodeView: View {
     }
 }
 
-/// The tab switch: 51 x 31 track, 27pt thumb (TabControlToggle.svelte).
+/// The tab switch: 51 x 31 track, 27pt thumb (as in the web renderer).
 struct ToggleView: View {
     let on: Bool
     let track: Fill?
@@ -259,7 +259,7 @@ struct VideoNodeView: UIViewRepresentable {
     }
 }
 
-/// A question's text field (InputText.svelte): keyboard type, capitalization, validity per type.
+/// A question's text field (as in the web renderer): keyboard type, capitalization, validity per type.
 struct TextFieldView: UIViewRepresentable {
     let content: TextFieldContent
     let onChange: (String, Bool) -> Void

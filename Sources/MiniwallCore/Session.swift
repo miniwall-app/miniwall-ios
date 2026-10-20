@@ -174,7 +174,7 @@ public final class DeviceMemory {
     }
 }
 
-/// A delivery API body turned into the screen to show (sdks/web/src/load.ts).
+/// A delivery API body turned into the screen to show (Web SDK src/load.ts).
 public enum Delivery {
     private static func contextOf(_ body: JSONValue) -> EventContext? {
         guard let id = body.str("paywallId") else { return nil }
@@ -330,7 +330,7 @@ public struct MiniwallError: LocalizedError, Sendable {
     public var errorDescription: String? { message }
 }
 
-/// One presentation of a screen and the flow behind it (sdks/web/src/render.ts). Mirrors `Session.kt`.
+/// One presentation of a screen and the flow behind it (Web SDK src/render.ts). Mirrors `Session.kt`.
 public final class PaywallSession {
     private struct Screen {
         let paywall: JSONValue

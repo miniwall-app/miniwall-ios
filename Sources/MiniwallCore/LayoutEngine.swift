@@ -91,7 +91,7 @@ public final class LayoutNode {
     var pbV: Double { padding.vertical + 2 * border }
 
     /// Layout tree for a component; hidden nodes are dropped, unsupported ones are replaced by
-    /// their fallback or dropped (same as the web's Node.svelte). Nil when nothing renders.
+    /// their fallback or dropped (same as the web renderer). Nil when nothing renders.
     public static func from(_ component: Component, measure: (Component) -> Measurable? = { _ in nil }) -> LayoutNode? {
         guard component.isVisible else { return nil }
         switch component {

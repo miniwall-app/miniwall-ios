@@ -37,7 +37,7 @@ struct CornerShape: InsettableShape {
     }
 }
 
-/// Image and video masks (ClipPath.svelte).
+/// Image and video masks (as in the web renderer).
 struct MaskShape: Shape {
     var mask: Mask
 

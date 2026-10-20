@@ -1,6 +1,6 @@
 import Foundation
 
-/// The screen document the dashboard publishes (`PaywallData` of `@ui-kit/ui-sdk`).
+/// The screen document the dashboard publishes (`PaywallData`, described by `schema/paywall.schema.json` in miniwall-spec).
 /// Decoding is lenient by design: an unknown field is ignored, an unknown node type becomes
 /// ``Component/unsupported(type:id:raw:fallback:)`` (rendered through its `fallback`, else skipped),
 /// a malformed value falls back to the web renderer's default. Mirrors `com.miniwall.core.model`.

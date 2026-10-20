@@ -225,7 +225,7 @@ public enum TextLogic {
         return out.filter { !$0.text.isEmpty }
     }
 
-    // MARK: URLs and fonts (sdks/web/src/url.ts, fonts.ts)
+    // MARK: URLs and fonts (Web SDK src/url.ts, fonts.ts)
 
     private static let openable = regex("^(https?:|mailto:|tel:)")
     private static let rootPath = regex("^/(?!/)")

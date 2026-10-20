@@ -115,7 +115,7 @@ func jsNumber(_ d: Double) -> String {
     return String(d)
 }
 
-/// Placement audiences and A/B buckets (sdks/web/src/targeting.ts, load.ts).
+/// Placement audiences and A/B buckets (Web SDK src/targeting.ts, load.ts).
 public enum Targeting {
     /// Audience condition on a named field. `app_version` (a native-only fact) compares ordering ops
     /// (`gt`/`gte`/`lt`/`lte`) as dotted version numbers; every other op and field is `matches`.
@@ -239,7 +239,7 @@ public enum Targeting {
     }
 }
 
-/// Screen links and answers (sdks/web/src/flow.ts).
+/// Screen links and answers (Web SDK src/flow.ts).
 public enum Flow {
     public enum Link: Equatable {
         case back

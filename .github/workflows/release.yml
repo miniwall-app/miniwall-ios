@@ -32,6 +32,7 @@ jobs:
             v=$(sed -n "s/^  s.version *= *'\(.*\)'/\1/p" "$f")
             [ "$v" = "$TAG" ] || { echo "::error::tag $TAG does not match $f ($v)"; exit 1; }
           done
+          grep -q "public static let version = \"$TAG\"" Sources/MiniwallSDK/Miniwall.swift || { echo "::error::Miniwall.version in Sources/MiniwallSDK/Miniwall.swift is not $TAG (it is sent as X-Miniwall-SDK)"; exit 1; }
           grep -qE "^## ${TAG//./\\.}( |$)" CHANGELOG.md || { echo "::error::CHANGELOG.md has no '## $TAG' section"; exit 1; }
           echo "enabled=${ENABLED:-false}" >> "$GITHUB_OUTPUT"
 
