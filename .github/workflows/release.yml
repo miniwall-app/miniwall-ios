@@ -45,15 +45,24 @@ jobs:
       - uses: actions/checkout@v4
       - run: scripts/fetch-spec.sh
       - run: swift test
+      # Core goes first and SDK depends on it: after pushing Core, wait until the Trunk API serves it before linting SDK.
+      # A pod whose version already exists is skipped, so a rerun after a partial failure finishes the job.
       - name: lint and push
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+          TAG: ${{ github.ref_name }}
         run: |
           set -euo pipefail
-          pod spec lint MiniwallCore.podspec --allow-warnings
-          pod trunk push MiniwallCore.podspec --allow-warnings
-          pod spec lint MiniwallSDK.podspec --allow-warnings
-          pod trunk push MiniwallSDK.podspec --allow-warnings
+          on_trunk() { curl -fsS -o /dev/null "https://trunk.cocoapods.org/api/v1/pods/$1/specs/$TAG"; }
+          for pod in MiniwallCore MiniwallSDK; do
+            if on_trunk "$pod"; then echo "$pod $TAG is already on Trunk, skipping"; continue; fi
+            if [ "$pod" = MiniwallSDK ]; then
+              for i in $(seq 1 30); do on_trunk MiniwallCore && break; echo "waiting for MiniwallCore $TAG on Trunk ($i/30)"; sleep 30; done
+              on_trunk MiniwallCore || { echo "::error::MiniwallCore $TAG never appeared on Trunk"; exit 1; }
+            fi
+            pod spec lint "$pod.podspec" --allow-warnings
+            pod trunk push "$pod.podspec" --allow-warnings
+          done
 
   github-release:
     name: GitHub release
