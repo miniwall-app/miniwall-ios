@@ -3,7 +3,7 @@
 Show screens built in the Miniwall dashboard (paywalls, onboarding, offers, surveys) natively in
 SwiftUI. Miniwall renders; your app sells: prices come from your app, purchases run in your code.
 
-Status: preview, not yet tagged for release. Tested on an iPhone 17 simulator (iOS 27): `swift test` 75/75, UI tests, 77-template sweep (the sample app and the sweep are not in this repository). iOS 16+, Swift 5.9 (Xcode 15+).
+Status: preview, not yet tagged for release. Tested on iPhone 17 and iPad Pro 13" simulators (iOS 27, Xcode 27): `swift test` 76/76 (the core), 13 UI tests of the sample app (purchase, restore, flow, offline, Apple's accessibility audit, a font server that never answers; StoreKit is opt-in), and the 77-template sweep in light mode and at the largest text size (`Example/`). iOS 16+, Swift 5.9 (Xcode 15+).
 
 ## Install
 

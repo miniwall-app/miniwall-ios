@@ -9,6 +9,7 @@
 //   -purchaseMode fake|storekit   fake (default): 0.8 s then success; storekit: StoreKit 2 against Configuration.storekit
 //   -purchaseResult true|false    fake purchase outcome (default true)
 //   -restoreResult true|false     fake restore outcome (default false)
+//   -blackholeFont       the bundled screens declare a custom font whose server never answers (UI test: it must not hold the screen back)
 import MiniwallSDK
 import Network
 import StoreKit
@@ -111,8 +112,14 @@ struct ContentView: View {
     }
 
     static func bundled(_ name: String) -> JSONValue? {
-        guard let url = Bundle.main.url(forResource: name, withExtension: "json"), let data = try? Data(contentsOf: url) else { return nil }
-        return try? JSONValue.parse(data)
+        guard let url = Bundle.main.url(forResource: name, withExtension: "json"), let data = try? Data(contentsOf: url),
+              var json = try? JSONValue.parse(data) else { return nil }
+        if CommandLine.arguments.contains("-blackholeFont"), case var .object(top) = json, case var .object(config)? = top["components_config"] {
+            config["fonts"] = .object(["Blackhole@400": .object(["ios": .string("https://10.255.255.1/blackhole.ttf")])])
+            top["components_config"] = .object(config)
+            json = .object(top)
+        }
+        return json
     }
 
     /// A template of the library (`{description, paywall}`), bundled from the spec's fixtures/templates, or a small component

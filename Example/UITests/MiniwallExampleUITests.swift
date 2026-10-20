@@ -86,7 +86,9 @@ final class MiniwallExampleUITests: XCTestCase {
         tap("Monthly")
         XCTAssertTrue(button("Monthly").isSelected)
         XCTAssertFalse(button("Annual").isSelected)
-        XCTAssertTrue(button("Monthly").label.contains("$9.99"), "the price comes from the app: \(button("Monthly").label)")
+        // The price is formatted for the device's region ("$9.99", "US$9,99"): check the digits, not the separator.
+        let monthly = button("Monthly").label
+        XCTAssertTrue(monthly.contains("9.99") || monthly.contains("9,99"), "the price comes from the app: \(monthly)")
         tap("Subscribe")
         assertResult("purchased:monthly") // fake store: 0.8 s, then yes
     }
@@ -189,6 +191,50 @@ final class MiniwallExampleUITests: XCTestCase {
     }
 
     // MARK: StoreKit (optional)
+
+    // MARK: Fonts
+
+    /// A custom font whose server never answers must not hold the screen back for the font download's 6 s timeout.
+    func testAFontThatNeverArrivesDoesNotHoldTheScreenBack() {
+        launch("-blackholeFont")
+        let started = Date()
+        tapSample("present-paywall")
+        waitFor("Go Pro")
+        let seconds = Date().timeIntervalSince(started)
+        XCTAssertLessThan(seconds, 6.5, "the screen took \(seconds) s to show (the fonts' wait is limited to 1.5 s)")
+        tap("Close")
+        assertResult("closed")
+    }
+
+    // MARK: Accessibility (Apple's audit stands in for VoiceOver on a device)
+
+    /// Runs the system accessibility audit on a screen: every control has a description and a trait, hit regions are large enough,
+    /// nothing is clipped. Left out: colour contrast (it follows the screen's own design) and Dynamic Type (the SDK caps text growth at `maxFontScale`, 1.6 by default, so the audit reports it as partly supported).
+    private func auditAccessibility(file: StaticString = #filePath, line: UInt = #line) throws {
+        guard #available(iOS 17.0, *) else { throw XCTSkip("performAccessibilityAudit needs iOS 17") }
+        var issues: [String] = []
+        try app.performAccessibilityAudit(for: [.sufficientElementDescription, .hitRegion, .elementDetection, .trait, .textClipped]) { issue in
+            issues.append("\(issue.auditType.rawValue): \(issue.compactDescription) [\(issue.element?.label ?? "-")]")
+            return true
+        }
+        XCTAssertTrue(issues.isEmpty, "accessibility audit:\n" + issues.joined(separator: "\n"), file: file, line: line)
+    }
+
+    func testAccessibilityAuditOfThePaywall() throws {
+        launch()
+        tapSample("present-paywall")
+        waitFor("Go Pro")
+        try auditAccessibility()
+    }
+
+    func testAccessibilityAuditOfAFlowQuestion() throws {
+        launch()
+        tapSample("present-flow")
+        waitFor("Welcome aboard")
+        tap("Next")
+        waitFor("What is your goal?")
+        try auditAccessibility()
+    }
 
     /// Buys through StoreKit 2 against Configuration.storekit (no money moves). The purchase sheet is system UI whose
     /// layout changes between iOS versions, so this runs only when asked: MINIWALL_UITEST_STOREKIT=1 xcodebuild test ...
