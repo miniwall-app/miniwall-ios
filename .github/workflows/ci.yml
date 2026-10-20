@@ -24,3 +24,13 @@ jobs:
             grep -E "error:|failed|Fatal error" swift-test.log | head -15 | while IFS= read -r line; do echo "::error::${line:0:400}"; done
             exit 1
           fi
+
+  example:
+    name: sample app builds
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: scripts/fetch-spec.sh
+      - run: brew install xcodegen
+      - run: cd Example && xcodegen generate
+      - run: xcodebuild build -project Example/MiniwallExample.xcodeproj -scheme MiniwallExample -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO

@@ -63,3 +63,5 @@ The tests run against the [Miniwall spec](https://github.com/miniwall-app/miniwa
 scripts/fetch-spec.sh   # puts it in .spec/ (or set MINIWALL_SPEC_DIR to your own checkout)
 swift test              # core: layout goldens, logic vectors, components, sessions (macOS, no simulator)
 ```
+
+`Example/` is a sample app (XcodeGen) with UI tests and a template sweep: see `Example/README.md`. It bundles the spec's ten example templates.

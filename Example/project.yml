@@ -1,0 +1,76 @@
+# XcodeGen spec: builds the sample app plus its XCUITest bundle. `brew install xcodegen`, then:
+#   scripts/fetch-spec.sh && cd Example && xcodegen generate && open MiniwallExample.xcodeproj
+# The generated project is ignored by git (ios/.gitignore: *.xcodeproj).
+name: MiniwallExample
+options:
+  bundleIdPrefix: app.miniwall
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+packages:
+  MiniwallSDK:
+    path: ..
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+targets:
+  MiniwallExample:
+    type: application
+    platform: iOS
+    sources:
+      - path: ContentView.swift
+      - path: MiniwallExampleApp.swift
+      - path: Configuration.storekit
+        buildPhase: none
+      # Screens shared by every platform's UI tests: copied flat into the app bundle (paywall.json, flow-*.json, placements.json...).
+      - path: ../.spec/mock-api/ui
+        buildPhase: resources
+      # The spec's templates, kept in their folder: the template sweep presents each one (-tpl <name>). The open spec has ten; link a bigger
+      # spec folder at .spec to sweep a bigger library.
+      - path: ../.spec/fixtures/templates
+        type: folder
+        buildPhase: resources
+      # Small screens for carousel, tabs, video and multiple choice (B156), presented the same way (-tpl carousel-pages).
+      - path: ../.spec/fixtures/components
+        type: folder
+        buildPhase: resources
+    dependencies:
+      - package: MiniwallSDK
+        product: MiniwallSDK
+    info:
+      path: Info.plist
+      properties:
+        UILaunchScreen: {}
+        CFBundleDisplayName: Miniwall sample
+        # The UI tests talk to a local http server inside the app (loopback only).
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.miniwall.example
+        TARGETED_DEVICE_FAMILY: "1,2"
+  MiniwallExampleUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: UITests
+    dependencies:
+      - target: MiniwallExample
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.miniwall.example.uitests
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  MiniwallExample:
+    build:
+      targets:
+        MiniwallExample: all
+    run:
+      config: Debug
+      # If your XcodeGen is older and rejects this key, set it by hand: Edit Scheme > Run > Options > StoreKit Configuration.
+      storeKitConfiguration: Configuration.storekit
+    test:
+      config: Debug
+      storeKitConfiguration: Configuration.storekit
+      targets:
+        - MiniwallExampleUITests
