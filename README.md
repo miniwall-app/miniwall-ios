@@ -3,13 +3,23 @@
 Show screens built in the Miniwall dashboard (paywalls, onboarding, offers, surveys) natively in
 SwiftUI. Miniwall renders; your app sells: prices come from your app, purchases run in your code.
 
-Status: preview, not yet tagged for release. Tested on iPhone 17 and iPad Pro 13" simulators (iOS 27, Xcode 27): `swift test` 76/76 (the core), 13 UI tests of the sample app (purchase, restore, flow, offline, Apple's accessibility audit, a font server that never answers; StoreKit is opt-in), and the 77-template sweep in light mode and at the largest text size (`Example/`). iOS 16+, Swift 5.9 (Xcode 15+).
+Status: `0.1.0`. Tested on iPhone 17 and iPad Pro 13" simulators (iOS 27, Xcode 27): `swift test` 76/76 (the core), 13 UI tests of the sample app (purchase, restore, flow, offline, Apple's accessibility audit, a font server that never answers; StoreKit is opt-in), and the 77-template sweep in light mode and at the largest text size (`Example/`). iOS 16+, Swift 5.9 (Xcode 15+).
 
 ## Install
 
-Swift Package Manager: add this repository (or, for now, a local checkout) and pick the
-`MiniwallSDK` product. CocoaPods (React Native, Flutter): `pod 'MiniwallCore', :path => '<miniwall-ios checkout>'`
-and `pod 'MiniwallSDK', :path => '<miniwall-ios checkout>'`.
+Swift Package Manager: in Xcode choose **File > Add Package Dependencies**, enter
+`https://github.com/miniwall-app/miniwall-ios` and add the `MiniwallSDK` product. With a `Package.swift`:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/miniwall-app/miniwall-ios", from: "0.1.0"),
+],
+targets: [
+    .target(name: "MyApp", dependencies: [.product(name: "MiniwallSDK", package: "miniwall-ios")]),
+]
+```
+
+CocoaPods (also what the React Native and Flutter wrappers use): `pod 'MiniwallSDK'`.
 
 ## Use
 
