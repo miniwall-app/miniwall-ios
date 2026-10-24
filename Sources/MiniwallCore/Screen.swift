@@ -30,6 +30,12 @@ public final class ScreenRender {
 
 /// Locale choice (render.ts resolveLocale): exact, then same language, then the default.
 public enum Localization {
+    /// The locale a screen is drawn in: ``resolve(_:requested:defaultLocale:)`` over the screen's `components_localizations` and `default_locale`.
+    public static func forPaywall(_ paywall: JSONValue, requested: String?) -> String {
+        let available = Array((paywall.obj("components_localizations")?.objectValue ?? [:]).keys)
+        return resolve(available, requested: requested, defaultLocale: paywall.str("default_locale") ?? "en_US")
+    }
+
     public static func resolve(_ available: [String], requested: String?, defaultLocale: String) -> String {
         if let requested, !requested.isEmpty {
             // Only the first '-' (like the web): en-US -> en_US.

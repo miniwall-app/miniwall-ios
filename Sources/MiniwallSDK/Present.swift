@@ -230,12 +230,15 @@ final class PresentationCoordinator: ObservableObject, SessionHost {
         self.completion = completion
         let options = self.options
         let locale = options.locale ?? Miniwall.currentOptions.locale ?? Locale.current.identifier
-        let computed = Pricing.productVariables(options.products, locale: locale)
-        let variables = computed.merging(options.variablesPerPackage) { $0.merging($1) { $1 } }
+        // Prices are formatted in the language the screen is drawn in (as the Web SDK does), not in the device language.
+        func variables(for screen: JSONValue) -> [String: [String: String]] {
+            Pricing.productVariables(options.products, locale: Localization.forPaywall(screen, requested: locale))
+                .merging(options.variablesPerPackage) { $0.merging($1) { $1 } }
+        }
         let custom = options.customVariables.mapValues { value -> String in
             switch value {
             case let .string(s): return s
-            case let .number(n): return n == n.rounded() && abs(n) < 1e15 ? String(Int64(n)) : String(n)
+            case let .number(n): return JsNumber.format(n)
             case let .bool(b): return b ? "true" : "false"
             }
         }
@@ -254,7 +257,7 @@ final class PresentationCoordinator: ObservableObject, SessionHost {
                 }
             },
             controllerFactory: { json, answers, onEvent in
-                ScreenController(paywall: json, locale: locale, dark: dark, variablesPerPackage: variables, baseVariables: custom,
+                ScreenController(paywall: json, locale: locale, dark: dark, variablesPerPackage: variables(for: json), baseVariables: custom,
                                  infoPerPackage: info, showRestoreButton: showRestore, initialAnswers: answers, onEvent: onEvent)
             },
             host: self,

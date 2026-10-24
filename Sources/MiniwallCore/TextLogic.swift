@@ -91,11 +91,11 @@ public enum TextLogic {
     }
 
     private static let newLine = regex(#"\\\n"#)
-    private static let bold = regex(#"\*\*(.*?)\*\*"#)
-    private static let italic = regex(#"\*(.*?)\*"#)
-    private static let strike = regex("~(.*?)~")
-    private static let code = regex("`(.*?)`")
-    private static let link = regex(#"\[(.*?)\]\((.*?)\)"#)
+    private static let bold = regex(#"\*\*([^\n\r\u2028\u2029]*?)\*\*"#)
+    private static let italic = regex(#"\*([^\n\r\u2028\u2029]*?)\*"#)
+    private static let strike = regex("~([^\n\r\u2028\u2029]*?)~")
+    private static let code = regex("`([^\n\r\u2028\u2029]*?)`")
+    private static let link = regex(#"\[([^\n\r\u2028\u2029]*?)\]\(([^\n\r\u2028\u2029]*?)\)"#)
     static let codeOpen = "<span style='font-family: monospace'>"
 
     /// The small markdown subset as HTML, after escaping (same output as the web, tag for tag).

@@ -107,12 +107,37 @@ func jsString(_ v: JSONValue?) -> String {
     }
 }
 
-func jsNumber(_ d: Double) -> String {
-    if d.isNaN { return "NaN" }
-    if d.isInfinite { return d > 0 ? "Infinity" : "-Infinity" }
-    // Int64(d) traps above 9.2e18: whole numbers that large print through %.0f (what JS prints below 1e21).
-    if d == d.rounded(), abs(d) < 1e21 { return abs(d) < 9e15 ? String(Int64(d)) : String(format: "%.0f", d) }
-    return String(d)
+func jsNumber(_ d: Double) -> String { JsNumber.format(d) }
+
+/// `String(number)` as JavaScript prints it (ECMAScript Number::toString): shortest digits, plain below 1e21, exponent form beyond.
+public enum JsNumber {
+    public static func format(_ d: Double) -> String {
+        if d.isNaN { return "NaN" }
+        if d.isInfinite { return d > 0 ? "Infinity" : "-Infinity" }
+        if d == 0 { return "0" }
+        // Swift prints the shortest digits that round-trip, as "123.45", "1e-05" or "1.5e+20": read them as digits and a point position.
+        let parts = "\(abs(d))".split(separator: "e", maxSplits: 1).map(String.init)
+        let mantissa = parts[0].split(separator: ".", maxSplits: 1, omittingEmptySubsequences: false).map(String.init)
+        var digits = Array(mantissa[0] + (mantissa.count > 1 ? mantissa[1] : ""))
+        var n = mantissa[0].count + (parts.count > 1 ? Int(parts[1]) ?? 0 : 0)
+        while digits.count > 1, digits.first == "0" { digits.removeFirst(); n -= 1 }
+        while digits.count > 1, digits.last == "0" { digits.removeLast() }
+        let k = digits.count
+        let text = String(digits)
+        let body: String
+        if k <= n, n <= 21 {
+            body = text + String(repeating: "0", count: n - k)
+        } else if n >= 1, n <= 21 {
+            body = String(digits[..<n]) + "." + String(digits[n...])
+        } else if n <= 0, n > -6 {
+            body = "0." + String(repeating: "0", count: -n) + text
+        } else {
+            let e = n - 1
+            let head = k == 1 ? text : String(digits[0]) + "." + String(digits[1...])
+            body = head + "e" + (e >= 0 ? "+" : "-") + String(abs(e))
+        }
+        return d < 0 ? "-" + body : body
+    }
 }
 
 /// Placement audiences and A/B buckets (Web SDK src/targeting.ts, load.ts).
