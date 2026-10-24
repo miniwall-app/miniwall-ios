@@ -4,7 +4,7 @@
 #   pod 'MiniwallSDK', :path => '<miniwall-ios checkout>'
 Pod::Spec.new do |s|
   s.name          = 'MiniwallSDK'
-  s.version       = '0.1.0'
+  s.version       = '0.1.1'
   s.summary       = 'Show paywalls, onboarding and offers built in the Miniwall dashboard, rendered natively in SwiftUI.'
   s.homepage      = 'https://docs.miniwall.app'
   s.license       = { :type => 'MIT' }

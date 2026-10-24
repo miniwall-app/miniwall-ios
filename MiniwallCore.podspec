@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name          = 'MiniwallCore'
-  s.version       = '0.1.0'
+  s.version       = '0.1.1'
   s.summary       = 'Miniwall screen model, layout engine and logic (pure Swift), shared by MiniwallSDK.'
   s.homepage      = 'https://docs.miniwall.app'
   s.license       = { :type => 'MIT' }

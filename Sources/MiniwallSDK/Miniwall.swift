@@ -27,7 +27,7 @@ public enum ColorMode: Sendable { case light, dark, system }
 /// `preload`, `reportPurchase`), Swift syntax. Miniwall renders screens; your app sells (D-109).
 public enum Miniwall {
     /// SDK version, sent as `X-Miniwall-SDK: ios/<version>`.
-    public static let version = "0.1.0"
+    public static let version = "0.1.1"
     static let defaultAPIURL = "https://api.miniwall.app"
 
     public struct Options: Sendable {

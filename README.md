@@ -12,7 +12,7 @@ Swift Package Manager: in Xcode choose **File > Add Package Dependencies**, ente
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/miniwall-app/miniwall-ios", from: "0.1.0"),
+    .package(url: "https://github.com/miniwall-app/miniwall-ios", .upToNextMinor(from: "0.1.0")), // 0.x: a minor release can break
 ],
 targets: [
     .target(name: "MyApp", dependencies: [.product(name: "MiniwallSDK", package: "miniwall-ios")]),
